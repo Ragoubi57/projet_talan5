@@ -1,0 +1,15 @@
+{
+    "input": {
+        "user": {
+            "role": "branch_manager",
+            "region": "northeast",
+            "purpose": "investigation"
+        },
+        "data_product": "dp_complaints",
+        "columns": [
+            {"name": "consumer_narrative", "sensitivity": "HIGH"},
+            {"name": "complaint_id", "sensitivity": "LOW"}
+        ],
+        "action": "query"
+    }
+}
