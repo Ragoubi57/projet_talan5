@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: stg_complaints
+    description: "Staged and cleaned consumer complaints"
+    columns:
+      - name: complaint_id
+        tests:
+          - not_null
+          - unique
+      - name: date_received
+        tests:
+          - not_null
+      - name: product
+        tests:
+          - not_null
+      - name: company
+        tests:
+          - not_null
+
+  - name: stg_call_reports
+    description: "Staged and cleaned quarterly bank financials"
+    columns:
+      - name: quarter
+        tests:
+          - not_null
+      - name: bank_name
+        tests:
+          - not_null
+      - name: bank_id
+        tests:
+          - not_null
+      - name: total_assets
+        tests:
+          - not_null

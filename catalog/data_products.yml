@@ -1,0 +1,109 @@
+data_products:
+  - id: dp_complaints
+    name: "Consumer Complaints"
+    description: "Sanitized consumer complaint facts from CFPB data"
+    owner: "data_engineering"
+    version: "2.0.0"
+    source_tables: ["stg_complaints"]
+    columns:
+      - name: complaint_id
+        type: INTEGER
+        sensitivity: LOW
+        description: "Unique complaint identifier"
+      - name: date_received
+        type: DATE
+        sensitivity: LOW
+        description: "Date complaint was received"
+      - name: product
+        type: VARCHAR
+        sensitivity: LOW
+        description: "Financial product type"
+      - name: sub_product
+        type: VARCHAR
+        sensitivity: LOW
+        description: "Financial sub-product type"
+      - name: issue
+        type: VARCHAR
+        sensitivity: LOW
+        description: "Primary complaint issue"
+      - name: sub_issue
+        type: VARCHAR
+        sensitivity: LOW
+        description: "Sub-issue detail"
+      - name: company
+        type: VARCHAR
+        sensitivity: LOW
+        description: "Company name"
+      - name: state
+        type: VARCHAR
+        sensitivity: LOW
+        description: "US state code"
+      - name: channel
+        type: VARCHAR
+        sensitivity: LOW
+        description: "Submission channel"
+      - name: company_response
+        type: VARCHAR
+        sensitivity: LOW
+        description: "Company response category"
+      - name: timely_response
+        type: VARCHAR
+        sensitivity: LOW
+        description: "Whether response was timely"
+      - name: consumer_disputed
+        type: VARCHAR
+        sensitivity: LOW
+        description: "Whether consumer disputed"
+      - name: consumer_narrative
+        type: VARCHAR
+        sensitivity: HIGH
+        description: "Free-text narrative (PII risk)"
+    quality_tests:
+      - not_null: [complaint_id, date_received, product, company]
+      - unique: [complaint_id]
+      - accepted_values:
+          column: timely_response
+          values: ["Yes", "No"]
+
+  - id: dp_call_reports
+    name: "Quarterly Bank Financials"
+    description: "Quarterly bank financial data from FDIC/FFIEC Call Reports"
+    owner: "data_engineering"
+    version: "1.5.0"
+    source_tables: ["stg_call_reports"]
+    columns:
+      - name: quarter
+        type: VARCHAR
+        sensitivity: LOW
+        description: "Fiscal quarter (e.g., 2024-Q1)"
+      - name: bank_name
+        type: VARCHAR
+        sensitivity: LOW
+        description: "Bank name"
+      - name: bank_id
+        type: INTEGER
+        sensitivity: LOW
+        description: "Bank identifier"
+      - name: total_assets
+        type: DOUBLE
+        sensitivity: LOW
+        description: "Total assets in USD"
+      - name: total_deposits
+        type: DOUBLE
+        sensitivity: LOW
+        description: "Total deposits in USD"
+      - name: net_income
+        type: DOUBLE
+        sensitivity: MED
+        description: "Net income in USD"
+      - name: non_performing_assets
+        type: DOUBLE
+        sensitivity: MED
+        description: "Non-performing assets in USD"
+      - name: tier1_capital_ratio
+        type: DOUBLE
+        sensitivity: LOW
+        description: "Tier 1 capital ratio"
+    quality_tests:
+      - not_null: [quarter, bank_name, bank_id, total_assets]
+      - unique: [quarter, bank_id]

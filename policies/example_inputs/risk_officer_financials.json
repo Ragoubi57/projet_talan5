@@ -1,0 +1,16 @@
+{
+    "input": {
+        "user": {
+            "role": "risk_officer",
+            "region": "all",
+            "purpose": "analysis"
+        },
+        "data_product": "dp_call_reports",
+        "columns": [
+            {"name": "net_income", "sensitivity": "MED"},
+            {"name": "quarter", "sensitivity": "LOW"},
+            {"name": "bank_name", "sensitivity": "LOW"}
+        ],
+        "action": "query"
+    }
+}
