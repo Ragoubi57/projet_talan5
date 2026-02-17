@@ -47,18 +47,22 @@ def seed():
         SELECT
             CAST(complaint_id AS INTEGER) AS complaint_id,
             CAST(date_received AS DATE) AS date_received,
-            TRIM(product) AS product,
-            TRIM(sub_product) AS sub_product,
-            TRIM(issue) AS issue,
-            TRIM(sub_issue) AS sub_issue,
-            TRIM(company) AS company,
-            UPPER(TRIM(state)) AS state,
-            TRIM(zip_code) AS zip_code,
-            TRIM(channel) AS channel,
-            TRIM(company_response) AS company_response,
-            TRIM(timely_response) AS timely_response,
-            TRIM(consumer_disputed) AS consumer_disputed,
-            consumer_narrative
+            CAST(product AS VARCHAR) AS product,
+            CAST(sub_product AS VARCHAR) AS sub_product,
+            CAST(issue AS VARCHAR) AS issue,
+            CAST(sub_issue AS VARCHAR) AS sub_issue,
+            CAST(company AS VARCHAR) AS company,
+            UPPER(CAST(state AS VARCHAR)) AS state,
+            CAST(zip_code AS VARCHAR) AS zip_code,
+            CAST(channel AS VARCHAR) AS channel,
+            CAST(company_response AS VARCHAR) AS company_response,
+            CASE WHEN CAST(timely_response AS VARCHAR) IN ('true','True','1') THEN 'Yes'
+                 WHEN CAST(timely_response AS VARCHAR) IN ('false','False','0') THEN 'No'
+                 ELSE CAST(timely_response AS VARCHAR) END AS timely_response,
+            CASE WHEN CAST(consumer_disputed AS VARCHAR) IN ('true','True','1') THEN 'Yes'
+                 WHEN CAST(consumer_disputed AS VARCHAR) IN ('false','False','0') THEN 'No'
+                 ELSE CAST(consumer_disputed AS VARCHAR) END AS consumer_disputed,
+            CAST(consumer_narrative AS VARCHAR) AS consumer_narrative
         FROM raw_complaints
         WHERE complaint_id IS NOT NULL
           AND date_received IS NOT NULL

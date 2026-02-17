@@ -1,0 +1,90 @@
+{
+  "timestamp": "2026-02-17T17:05:55.235909+00:00",
+  "checks": [
+    {
+      "name": "dp_complaints: not_null complaint_id",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "dp_complaints: not_null date_received",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "dp_complaints: not_null product",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "dp_complaints: not_null company",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "dp_complaints: unique complaint_id",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "dp_complaints: timely_response values",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "dp_complaints: row_count > 0",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "dp_call_reports: not_null quarter",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "dp_call_reports: not_null bank_name",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "dp_call_reports: not_null bank_id",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "dp_call_reports: not_null total_assets",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "dp_call_reports: positive total_assets",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "dp_call_reports: row_count > 0",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "dp_call_reports: tier1_capital_ratio range",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    }
+  ],
+  "all_passed": true
+}
