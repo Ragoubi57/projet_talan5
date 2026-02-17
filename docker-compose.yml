@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  streamlit-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      - MOCK_LLM=1
+      - OPA_URL=http://opa:8181
+      - MARQUEZ_URL=http://marquez:5000
+      - DUCKDB_PATH=/app/data/warehouse.duckdb
+      - SMALL_MODE=1
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./data:/app/data
+    depends_on:
+      - opa
+    networks:
+      - banking-net
+
+  opa:
+    image: openpolicyagent/opa:latest
+    ports:
+      - "8181:8181"
+    command:
+      - "run"
+      - "--server"
+      - "--addr=0.0.0.0:8181"
+      - "/policies/banking.rego"
+    volumes:
+      - ./policies:/policies:ro
+    networks:
+      - banking-net
+
+  marquez:
+    image: marquezproject/marquez:latest
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - MARQUEZ_PORT=5000
+      - MARQUEZ_ADMIN_PORT=5001
+    depends_on:
+      - marquez-db
+    networks:
+      - banking-net
+
+  marquez-db:
+    image: postgres:14
+    environment:
+      - POSTGRES_USER=marquez
+      - POSTGRES_PASSWORD=marquez
+      - POSTGRES_DB=marquez
+    volumes:
+      - marquez-db-data:/var/lib/postgresql/data
+    networks:
+      - banking-net
+
+  marquez-web:
+    image: marquezproject/marquez-web:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - MARQUEZ_HOST=marquez
+      - MARQUEZ_PORT=5000
+    depends_on:
+      - marquez
+    networks:
+      - banking-net
+
+networks:
+  banking-net:
+    driver: bridge
+
+volumes:
+  marquez-db-data:
