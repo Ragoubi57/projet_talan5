@@ -1,11 +1,15 @@
 """Quality status checks for data products."""
 import json
 import os
+import re
 import logging
 from datetime import datetime, timezone
 from typing import Dict, Any, List
 
 logger = logging.getLogger(__name__)
+
+# Only allow table names matching dp_<identifier> pattern
+_VALID_TABLE_RE = re.compile(r'^dp_[a-z_][a-z0-9_]*$')
 
 
 def quality_status(dataset_ids: List[str], db_conn=None) -> Dict[str, Any]:
@@ -49,8 +53,10 @@ def _check_product_quality(ds_id: str, db_conn=None) -> Dict[str, Any]:
             # Table may not exist yet
             pass
 
-        # Get row count
+        # Get row count (validate table name to prevent SQL injection)
         try:
+            if not _VALID_TABLE_RE.match(ds_id):
+                raise ValueError(f"Invalid table name: {ds_id}")
             count_result = db_conn.execute(f"SELECT COUNT(*) FROM {ds_id}").fetchone()
             if count_result:
                 status["row_count"] = count_result[0]
