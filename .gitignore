@@ -14,6 +14,10 @@ data/warehouse.duckdb.wal
 artifacts/exports/*.csv
 artifacts/evidence_packs/*.json
 artifacts/lineage_events/*.json
+artifacts/ge_results.json
+artifacts/promote_status.json
+data/complaints.csv
+data/call_reports.csv
 dbt/target/
 dbt/logs/
 dbt/dbt_packages/

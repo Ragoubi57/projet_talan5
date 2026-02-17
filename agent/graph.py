@@ -532,8 +532,8 @@ def _compile_metric_sql(metric: Dict, plan: Dict) -> str:
         else:
             where_parts.append(f"quarter LIKE '{int(filters['year'])}%'")
     if "state" in filters:
-        where_parts.append(f"state = '{filters['state']}'")
-
+        state_val = re.sub(r'[^A-Z]', '', str(filters['state']))[:2]
+        where_parts.append(f"state = '{state_val}'")
     # Build query
     select_str = ", ".join(select_parts)
     where_str = " AND ".join(where_parts)
