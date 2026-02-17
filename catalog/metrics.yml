@@ -1,0 +1,78 @@
+metrics:
+  - metric_id: complaint_count
+    name: "Total Complaint Count"
+    description: "Count of consumer complaints filed against financial institutions"
+    owner: "compliance_team"
+    version: "1.2.0"
+    effective_date: "2024-01-01"
+    grain: "monthly"
+    data_product: "dp_complaints"
+    allowed_dimensions: ["product", "company", "state", "channel", "issue", "timely_response", "consumer_disputed"]
+    allowed_filters: ["date_received", "product", "company", "state", "channel"]
+    sensitivity: "LOW"
+    sql_template: "SELECT {dimensions}, COUNT(*) as complaint_count FROM dp_complaints WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: net_income_sum
+    name: "Net Income (Sum)"
+    description: "Total net income across banks for a given period"
+    owner: "finance_team"
+    version: "1.1.0"
+    effective_date: "2024-01-01"
+    grain: "quarterly"
+    data_product: "dp_call_reports"
+    allowed_dimensions: ["quarter", "bank_name"]
+    allowed_filters: ["quarter", "bank_name"]
+    sensitivity: "MED"
+    sql_template: "SELECT {dimensions}, SUM(net_income) as net_income_sum FROM dp_call_reports WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: net_income_avg
+    name: "Net Income (Average)"
+    description: "Average net income per bank for a given period"
+    owner: "finance_team"
+    version: "1.0.0"
+    effective_date: "2024-01-01"
+    grain: "quarterly"
+    data_product: "dp_call_reports"
+    allowed_dimensions: ["quarter", "bank_name"]
+    allowed_filters: ["quarter", "bank_name"]
+    sensitivity: "MED"
+    sql_template: "SELECT {dimensions}, AVG(net_income) as net_income_avg FROM dp_call_reports WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: deposits_sum
+    name: "Total Deposits"
+    description: "Sum of total deposits across banks"
+    owner: "finance_team"
+    version: "1.0.0"
+    effective_date: "2024-01-01"
+    grain: "quarterly"
+    data_product: "dp_call_reports"
+    allowed_dimensions: ["quarter", "bank_name"]
+    allowed_filters: ["quarter", "bank_name"]
+    sensitivity: "LOW"
+    sql_template: "SELECT {dimensions}, SUM(total_deposits) as deposits_sum FROM dp_call_reports WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: tier1_ratio_avg
+    name: "Average Tier 1 Capital Ratio"
+    description: "Average Tier 1 capital ratio across banks"
+    owner: "risk_team"
+    version: "1.0.0"
+    effective_date: "2024-01-01"
+    grain: "quarterly"
+    data_product: "dp_call_reports"
+    allowed_dimensions: ["quarter", "bank_name"]
+    allowed_filters: ["quarter", "bank_name"]
+    sensitivity: "LOW"
+    sql_template: "SELECT {dimensions}, AVG(tier1_capital_ratio) as tier1_ratio_avg FROM dp_call_reports WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: npa_ratio
+    name: "Non-Performing Assets Ratio"
+    description: "Ratio of non-performing assets to total assets"
+    owner: "risk_team"
+    version: "1.0.0"
+    effective_date: "2024-01-01"
+    grain: "quarterly"
+    data_product: "dp_call_reports"
+    allowed_dimensions: ["quarter", "bank_name"]
+    allowed_filters: ["quarter", "bank_name"]
+    sensitivity: "MED"
+    sql_template: "SELECT {dimensions}, AVG(CAST(non_performing_assets AS DOUBLE)/NULLIF(CAST(total_assets AS DOUBLE),0)) as npa_ratio FROM dp_call_reports WHERE {filters} GROUP BY {dimensions}"
