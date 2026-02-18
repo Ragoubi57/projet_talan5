@@ -1,0 +1,56 @@
+{
+  "request_id": "c95a0932-7ede-45e9-af52-254d03f5848c",
+  "timestamp": "2026-02-18T00:52:52.067150+00:00",
+  "request_text": "Show complaint counts by product and state for the last 12 months",
+  "user_attributes": {
+    "role": "branch_manager",
+    "region": "all",
+    "purpose": "reporting"
+  },
+  "policy_decision": {
+    "result": "ALLOW",
+    "reason": "Low sensitivity data allowed for all authenticated roles",
+    "constraints_applied": {
+      "min_group_size": 10
+    }
+  },
+  "metrics": {
+    "metric_ids": [
+      "complaint_count"
+    ],
+    "metric_versions": {
+      "complaint_count": "1.2.0"
+    }
+  },
+  "data_products": {
+    "products_used": [
+      "dp_complaints"
+    ],
+    "product_versions": {
+      "dp_complaints": "2.0.0"
+    }
+  },
+  "data_quality": {
+    "freshness": {
+      "dp_complaints": null
+    },
+    "quality_checks": {
+      "dp_complaints": true
+    }
+  },
+  "sql": {
+    "final_sql": "SELECT product, state, COUNT(*) AS complaint_count FROM dp_complaints WHERE 1=1 AND date_received >= CURRENT_DATE - INTERVAL '12 months' GROUP BY product, state HAVING COUNT(*) >= 10 ORDER BY product",
+    "canonical_sql": "SELECT PRODUCT, STATE, COUNT(*) AS COMPLAINT_COUNT FROM DP_COMPLAINTS WHERE 1=1 AND DATE_RECEIVED >= CURRENT_DATE - INTERVAL '12 MONTHS' GROUP BY PRODUCT, STATE HAVING COUNT(*) >= 10 ORDER BY PRODUCT",
+    "sql_hash": "a3362d4410ffadb935dc22214daf13a893a9fe86f11419c64b27ee0d5fc5f8c4"
+  },
+  "results": {
+    "row_count": 251,
+    "suppression_count": 0
+  },
+  "lineage": {
+    "event_id": "bb0b083e-f530-4057-9308-c20ce9709ac4"
+  },
+  "export": {
+    "artifact_path": null
+  }
+}

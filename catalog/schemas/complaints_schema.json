@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "required": ["complaint_id", "date_received", "product", "company", "state"],
+  "properties": {
+    "complaint_id": {"type": "integer"},
+    "date_received": {"type": "string", "format": "date"},
+    "product": {"type": "string", "minLength": 1},
+    "company": {"type": "string", "minLength": 1},
+    "state": {"type": "string", "pattern": "^[A-Z]{2}$"},
+    "channel": {"type": "string"},
+    "timely_response": {"type": "string", "enum": ["Yes", "No"]},
+    "consumer_disputed": {"type": "string"}
+  }
+}

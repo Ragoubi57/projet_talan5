@@ -1,0 +1,29 @@
+{
+  "eventType": "COMPLETE",
+  "eventTime": "2026-02-18T00:10:04.129356+00:00",
+  "run": {
+    "runId": "216d60c6-6d53-4bfe-ae2d-4de27b19ce93"
+  },
+  "job": {
+    "namespace": "banking_analytics",
+    "name": "analytics_query_net_income_sum"
+  },
+  "inputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "dp_call_reports"
+    }
+  ],
+  "outputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "query_results"
+    }
+  ],
+  "producer": "banking-analytics-agent",
+  "metadata": {
+    "sql": "SELECT quarter, SUM(net_income) AS net_income_sum FROM dp_call_reports WHERE 1=1 GROUP BY quarter HAVING COUNT(*) >= 10 ORDER BY quarter",
+    "user": "auditor",
+    "request_id": "pending"
+  }
+}

@@ -1,0 +1,243 @@
+"""Seed DuckDB warehouse from CSV data files."""
+import os
+import sys
+import duckdb
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.path.join(PROJECT_ROOT, "data")
+DB_PATH = os.environ.get("DUCKDB_PATH", os.path.join(DATA_DIR, "warehouse.duckdb"))
+
+REGION_STATES = {
+    "northeast": ["CT", "ME", "MA", "NH", "RI", "VT", "NJ", "NY", "PA"],
+    "southeast": ["AL", "AR", "DC", "DE", "FL", "GA", "KY", "LA", "MD", "MS", "NC", "SC", "TN", "VA", "WV"],
+    "midwest": ["IA", "IL", "IN", "KS", "MI", "MN", "MO", "ND", "NE", "OH", "SD", "WI"],
+    "west": ["AK", "AZ", "CA", "CO", "HI", "ID", "MT", "NM", "NV", "OR", "UT", "WA", "WY"],
+}
+
+BANK_REGION = {
+    "JPMorgan Chase": "northeast",
+    "Bank of America": "southeast",
+    "Wells Fargo": "west",
+    "Citibank": "northeast",
+    "U.S. Bancorp": "midwest",
+    "Truist Financial": "southeast",
+    "PNC Financial": "northeast",
+    "Goldman Sachs": "northeast",
+    "Morgan Stanley": "northeast",
+    "TD Bank": "northeast",
+    "Capital One": "southeast",
+    "Charles Schwab": "west",
+    "HSBC North America": "northeast",
+    "American Express": "northeast",
+    "Ally Financial": "midwest",
+    "Citizens Financial": "northeast",
+    "Fifth Third Bank": "midwest",
+    "KeyBank": "midwest",
+    "Huntington Bancshares": "midwest",
+    "Regions Financial": "southeast",
+    "M&T Bank": "northeast",
+    "Discover Financial": "midwest",
+    "Synchrony Financial": "northeast",
+    "BMO Harris": "midwest",
+    "Northern Trust": "midwest",
+    "Comerica": "midwest",
+    "Zions Bancorporation": "west",
+    "Webster Bank": "northeast",
+    "East West Bancorp": "west",
+    "Valley National Bank": "northeast",
+}
+
+
+def _case_from_map(col: str, mapping: dict, default: str) -> str:
+    parts = ["CASE"]
+    for key, val in mapping.items():
+        parts.append(f"WHEN {col} = '{key}' THEN '{val}'")
+    parts.append(f"ELSE '{default}' END")
+    return " ".join(parts)
+
+
+def _region_case(col: str) -> str:
+    parts = ["CASE"]
+    for region, states in REGION_STATES.items():
+        states_list = ", ".join(f"'{s}'" for s in states)
+        parts.append(f"WHEN {col} IN ({states_list}) THEN '{region}'")
+    parts.append("ELSE 'all' END")
+    return " ".join(parts)
+
+
+def seed():
+    """Load CSV data into DuckDB tables."""
+    print(f"Seeding DuckDB at {DB_PATH}...")
+    conn = duckdb.connect(DB_PATH)
+
+    # Load complaints
+    complaints_path = os.path.join(DATA_DIR, "complaints.csv")
+    if os.path.exists(complaints_path):
+        print(f"Loading complaints from {complaints_path}...")
+        conn.execute(f"""
+            CREATE OR REPLACE TABLE raw_complaints AS
+            SELECT * FROM read_csv_auto('{complaints_path}')
+        """)
+        count = conn.execute("SELECT COUNT(*) FROM raw_complaints").fetchone()[0]
+        print(f"  Loaded {count:,} complaints")
+    else:
+        print(f"WARNING: {complaints_path} not found. Run 'python scripts/generate_synth_data.py' first.")
+
+    # Load call reports
+    call_reports_path = os.path.join(DATA_DIR, "call_reports.csv")
+    if os.path.exists(call_reports_path):
+        print(f"Loading call reports from {call_reports_path}...")
+        conn.execute(f"""
+            CREATE OR REPLACE TABLE raw_call_reports AS
+            SELECT * FROM read_csv_auto('{call_reports_path}')
+        """)
+        count = conn.execute("SELECT COUNT(*) FROM raw_call_reports").fetchone()[0]
+        print(f"  Loaded {count:,} call reports")
+    else:
+        print(f"WARNING: {call_reports_path} not found. Run 'python scripts/generate_synth_data.py' first.")
+
+    # Create dp_* views/tables directly (in case dbt not run)
+    print("Creating gold-layer data product tables...")
+
+    conn.execute("""
+        CREATE OR REPLACE VIEW stg_complaints AS
+        SELECT
+            CAST(complaint_id AS INTEGER) AS complaint_id,
+            CAST(date_received AS DATE) AS date_received,
+            CAST(product AS VARCHAR) AS product,
+            CAST(sub_product AS VARCHAR) AS sub_product,
+            CAST(issue AS VARCHAR) AS issue,
+            CAST(sub_issue AS VARCHAR) AS sub_issue,
+            CAST(company AS VARCHAR) AS company,
+            UPPER(CAST(state AS VARCHAR)) AS state,
+            CAST(zip_code AS VARCHAR) AS zip_code,
+            CAST(channel AS VARCHAR) AS channel,
+            CAST(company_response AS VARCHAR) AS company_response,
+            CASE WHEN CAST(timely_response AS VARCHAR) IN ('true','True','1') THEN 'Yes'
+                 WHEN CAST(timely_response AS VARCHAR) IN ('false','False','0') THEN 'No'
+                 ELSE CAST(timely_response AS VARCHAR) END AS timely_response,
+            CASE WHEN CAST(consumer_disputed AS VARCHAR) IN ('true','True','1') THEN 'Yes'
+                 WHEN CAST(consumer_disputed AS VARCHAR) IN ('false','False','0') THEN 'No'
+                 ELSE CAST(consumer_disputed AS VARCHAR) END AS consumer_disputed,
+            CAST(consumer_narrative AS VARCHAR) AS consumer_narrative
+        FROM raw_complaints
+        WHERE complaint_id IS NOT NULL
+          AND date_received IS NOT NULL
+          AND product IS NOT NULL
+          AND company IS NOT NULL
+    """)
+
+    conn.execute("""
+        CREATE OR REPLACE VIEW stg_call_reports AS
+        SELECT
+            TRIM(quarter) AS quarter,
+            TRIM(bank_name) AS bank_name,
+            CAST(bank_id AS INTEGER) AS bank_id,
+            CAST(total_assets AS DOUBLE) AS total_assets,
+            CAST(total_deposits AS DOUBLE) AS total_deposits,
+            CAST(net_income AS DOUBLE) AS net_income,
+            CAST(non_performing_assets AS DOUBLE) AS non_performing_assets,
+            CAST(tier1_capital_ratio AS DOUBLE) AS tier1_capital_ratio
+        FROM raw_call_reports
+        WHERE quarter IS NOT NULL
+          AND bank_name IS NOT NULL
+          AND bank_id IS NOT NULL
+          AND total_assets IS NOT NULL
+          AND total_assets > 0
+    """)
+
+    region_case = _region_case("state")
+    bank_region_case = _case_from_map("bank_name", BANK_REGION, "all")
+
+    conn.execute(f"""
+        CREATE OR REPLACE TABLE dp_complaints AS
+        SELECT
+            complaint_id,
+            date_received,
+            DATE_TRUNC('month', date_received) AS date_month,
+            EXTRACT(YEAR FROM date_received) AS complaint_year,
+            EXTRACT(QUARTER FROM date_received) AS complaint_quarter,
+            product,
+            sub_product,
+            issue,
+            sub_issue,
+            company,
+            state,
+            {region_case} AS region,
+            channel,
+            company_response,
+            timely_response,
+            consumer_disputed,
+            consumer_narrative
+        FROM stg_complaints
+    """)
+
+    conn.execute(f"""
+        CREATE OR REPLACE TABLE dp_call_reports AS
+        SELECT
+            quarter,
+            bank_name,
+            bank_id,
+            total_assets,
+            total_deposits,
+            net_income,
+            non_performing_assets,
+            tier1_capital_ratio,
+            CASE
+                WHEN total_assets > 0 THEN ROUND(non_performing_assets / total_assets * 100, 4)
+                ELSE NULL
+            END AS npa_ratio,
+            CASE
+                WHEN total_assets > 0 THEN ROUND(total_deposits / total_assets * 100, 2)
+                ELSE NULL
+            END AS deposit_to_asset_ratio,
+            {bank_region_case} AS bank_region
+        FROM stg_call_reports
+    """)
+
+    # Create evidence_packs table
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS evidence_packs (
+            request_id VARCHAR PRIMARY KEY,
+            timestamp VARCHAR,
+            request_text VARCHAR,
+            user_role VARCHAR,
+            policy_result VARCHAR,
+            metric_ids VARCHAR,
+            data_products VARCHAR,
+            sql_hash VARCHAR,
+            row_count INTEGER,
+            suppression_count INTEGER,
+            evidence_json VARCHAR
+        )
+    """)
+
+    # Create promote_status table
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS promote_status (
+            data_product VARCHAR PRIMARY KEY,
+            promoted BOOLEAN DEFAULT FALSE,
+            last_promoted VARCHAR,
+            dbt_passed BOOLEAN DEFAULT FALSE,
+            ge_passed BOOLEAN DEFAULT FALSE
+        )
+    """)
+
+    # Insert default promote status
+    conn.execute("""
+        INSERT OR REPLACE INTO promote_status VALUES
+            ('dp_complaints', TRUE, CURRENT_TIMESTAMP, TRUE, TRUE),
+            ('dp_call_reports', TRUE, CURRENT_TIMESTAMP, TRUE, TRUE)
+    """)
+
+    # Verify
+    for table in ["dp_complaints", "dp_call_reports"]:
+        count = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+        print(f"  {table}: {count:,} rows")
+
+    conn.close()
+    print("Done! DuckDB seeded successfully.")
+
+
+if __name__ == "__main__":
+    seed()

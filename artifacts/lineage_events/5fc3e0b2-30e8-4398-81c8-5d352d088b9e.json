@@ -1,0 +1,29 @@
+{
+  "eventType": "COMPLETE",
+  "eventTime": "2026-02-18T01:23:39.219524+00:00",
+  "run": {
+    "runId": "5fc3e0b2-30e8-4398-81c8-5d352d088b9e"
+  },
+  "job": {
+    "namespace": "banking_analytics",
+    "name": "analytics_query_complaint_count"
+  },
+  "inputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "dp_complaints"
+    }
+  ],
+  "outputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "query_results"
+    }
+  ],
+  "producer": "banking-analytics-agent",
+  "metadata": {
+    "sql": "SELECT product, COUNT(*) AS complaint_count, '[REDACTED]' AS consumer_narrative FROM dp_complaints WHERE 1=1 GROUP BY product HAVING COUNT(*) >= 10 ORDER BY product LIMIT 100",
+    "user": "compliance_officer",
+    "request_id": "pending"
+  }
+}

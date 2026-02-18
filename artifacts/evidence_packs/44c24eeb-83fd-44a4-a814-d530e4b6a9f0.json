@@ -1,0 +1,57 @@
+{
+  "request_id": "44c24eeb-83fd-44a4-a814-d530e4b6a9f0",
+  "timestamp": "2026-02-18T09:10:00.261789+00:00",
+  "request_text": "Show total deposits by quarter",
+  "user_attributes": {
+    "role": "risk_officer",
+    "region": "all",
+    "purpose": "reporting"
+  },
+  "policy_decision": {
+    "result": "ALLOW",
+    "reason": "Low sensitivity data allowed for all authenticated roles",
+    "constraints_applied": {
+      "min_group_size": 10,
+      "must_aggregate_to_month": true
+    }
+  },
+  "metrics": {
+    "metric_ids": [
+      "deposits_sum"
+    ],
+    "metric_versions": {
+      "deposits_sum": "1.0.0"
+    }
+  },
+  "data_products": {
+    "products_used": [
+      "dp_call_reports"
+    ],
+    "product_versions": {
+      "dp_call_reports": "1.5.0"
+    }
+  },
+  "data_quality": {
+    "freshness": {
+      "dp_call_reports": null
+    },
+    "quality_checks": {
+      "dp_call_reports": true
+    }
+  },
+  "sql": {
+    "final_sql": "SELECT quarter, SUM(total_deposits) AS deposits_sum FROM dp_call_reports WHERE 1=1 GROUP BY quarter HAVING COUNT(*) >= 10 ORDER BY quarter",
+    "canonical_sql": "SELECT QUARTER, SUM(TOTAL_DEPOSITS) AS DEPOSITS_SUM FROM DP_CALL_REPORTS WHERE 1=1 GROUP BY QUARTER HAVING COUNT(*) >= 10 ORDER BY QUARTER",
+    "sql_hash": "208ff81315e995a1cabcf4966cf486576dcb76338901cd4d2aaf4e7b8126404d"
+  },
+  "results": {
+    "row_count": 24,
+    "suppression_count": 0
+  },
+  "lineage": {
+    "event_id": "113b701b-8337-4064-a84c-943bafaa35e5"
+  },
+  "export": {
+    "artifact_path": null
+  }
+}

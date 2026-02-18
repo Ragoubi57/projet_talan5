@@ -1,0 +1,29 @@
+{
+  "eventType": "COMPLETE",
+  "eventTime": "2026-02-18T01:06:43.860558+00:00",
+  "run": {
+    "runId": "29e9ba6f-9b56-4ff5-92b6-50e0ce8c6020"
+  },
+  "job": {
+    "namespace": "banking_analytics",
+    "name": "analytics_query_npa_ratio"
+  },
+  "inputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "dp_call_reports"
+    }
+  ],
+  "outputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "query_results"
+    }
+  ],
+  "producer": "banking-analytics-agent",
+  "metadata": {
+    "sql": "SELECT quarter, AVG(CAST(non_performing_assets AS DOUBLE)/NULLIF(CAST(total_assets AS DOUBLE),0)) AS npa_ratio FROM dp_call_reports WHERE 1=1 GROUP BY quarter HAVING COUNT(*) >= 10 ORDER BY quarter",
+    "user": "branch_manager",
+    "request_id": "pending"
+  }
+}

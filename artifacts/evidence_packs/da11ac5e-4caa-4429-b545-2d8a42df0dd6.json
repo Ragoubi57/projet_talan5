@@ -1,0 +1,58 @@
+{
+  "request_id": "da11ac5e-4caa-4429-b545-2d8a42df0dd6",
+  "timestamp": "2026-02-18T09:11:14.469854+00:00",
+  "request_text": "Show complaint counts by product and state for the last 12 months",
+  "user_attributes": {
+    "role": "branch_manager",
+    "region": "southeast",
+    "purpose": "reporting"
+  },
+  "policy_decision": {
+    "result": "ALLOW",
+    "reason": "Low sensitivity data allowed for all authenticated roles",
+    "constraints_applied": {
+      "min_group_size": 10,
+      "must_aggregate_to_month": true,
+      "region_filter": "southeast"
+    }
+  },
+  "metrics": {
+    "metric_ids": [
+      "complaint_count"
+    ],
+    "metric_versions": {
+      "complaint_count": "1.2.0"
+    }
+  },
+  "data_products": {
+    "products_used": [
+      "dp_complaints"
+    ],
+    "product_versions": {
+      "dp_complaints": "2.0.0"
+    }
+  },
+  "data_quality": {
+    "freshness": {
+      "dp_complaints": null
+    },
+    "quality_checks": {
+      "dp_complaints": true
+    }
+  },
+  "sql": {
+    "final_sql": "SELECT product, state, date_month, COUNT(*) AS complaint_count FROM dp_complaints WHERE 1=1 AND date_received >= CURRENT_DATE - INTERVAL '12 months' AND region = 'southeast' GROUP BY product, state, date_month HAVING COUNT(*) >= 10 ORDER BY product",
+    "canonical_sql": "SELECT PRODUCT, STATE, DATE_MONTH, COUNT(*) AS COMPLAINT_COUNT FROM DP_COMPLAINTS WHERE 1=1 AND DATE_RECEIVED >= CURRENT_DATE - INTERVAL '12 MONTHS' AND REGION = 'SOUTHEAST' GROUP BY PRODUCT, STATE, DATE_MONTH HAVING COUNT(*) >= 10 ORDER BY PRODUCT",
+    "sql_hash": "87ff96b9319947342a852ee69a7c308215f05f9c15ef19a3bc4ec2b2797c206d"
+  },
+  "results": {
+    "row_count": 3,
+    "suppression_count": 0
+  },
+  "lineage": {
+    "event_id": "fd416cc7-d10d-4773-8951-35542d636da5"
+  },
+  "export": {
+    "artifact_path": null
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "eventType": "COMPLETE",
+  "eventTime": "2026-02-18T01:22:15.081717+00:00",
+  "run": {
+    "runId": "fc8a0740-303f-44fb-b262-9c66ab23d219"
+  },
+  "job": {
+    "namespace": "banking_analytics",
+    "name": "analytics_query_timely_response_rate"
+  },
+  "inputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "dp_complaints"
+    }
+  ],
+  "outputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "query_results"
+    }
+  ],
+  "producer": "banking-analytics-agent",
+  "metadata": {
+    "sql": "SELECT region, AVG(CASE WHEN timely_response = 'Yes' THEN 1 ELSE 0 END) AS timely_response_rate FROM dp_complaints WHERE 1=1 GROUP BY region HAVING COUNT(*) >= 10 ORDER BY region",
+    "user": "branch_manager",
+    "request_id": "pending"
+  }
+}

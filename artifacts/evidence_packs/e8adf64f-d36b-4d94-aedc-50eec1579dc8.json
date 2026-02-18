@@ -1,0 +1,56 @@
+{
+  "request_id": "e8adf64f-d36b-4d94-aedc-50eec1579dc8",
+  "timestamp": "2026-02-18T00:43:14.293431+00:00",
+  "request_text": "NPA ratio by bank by quarter",
+  "user_attributes": {
+    "role": "branch_manager",
+    "region": "all",
+    "purpose": "reporting"
+  },
+  "policy_decision": {
+    "result": "ALLOW",
+    "reason": "Low sensitivity data allowed for all authenticated roles",
+    "constraints_applied": {
+      "min_group_size": 10
+    }
+  },
+  "metrics": {
+    "metric_ids": [
+      "npa_ratio"
+    ],
+    "metric_versions": {
+      "npa_ratio": "1.0.0"
+    }
+  },
+  "data_products": {
+    "products_used": [
+      "dp_call_reports"
+    ],
+    "product_versions": {
+      "dp_call_reports": "1.5.0"
+    }
+  },
+  "data_quality": {
+    "freshness": {
+      "dp_call_reports": null
+    },
+    "quality_checks": {
+      "dp_call_reports": true
+    }
+  },
+  "sql": {
+    "final_sql": "SELECT quarter, AVG(CAST(non_performing_assets AS DOUBLE)/NULLIF(CAST(total_assets AS DOUBLE),0)) AS npa_ratio FROM dp_call_reports WHERE 1=1 GROUP BY quarter HAVING COUNT(*) >= 10 ORDER BY quarter",
+    "canonical_sql": "SELECT QUARTER, AVG(CAST(NON_PERFORMING_ASSETS AS DOUBLE)/NULLIF(CAST(TOTAL_ASSETS AS DOUBLE),0)) AS NPA_RATIO FROM DP_CALL_REPORTS WHERE 1=1 GROUP BY QUARTER HAVING COUNT(*) >= 10 ORDER BY QUARTER",
+    "sql_hash": "a7a2afa1f42411f82de1e4f5398d1e1e2e9d4a1f07acdf01f1e7a78d5f89c404"
+  },
+  "results": {
+    "row_count": 24,
+    "suppression_count": 0
+  },
+  "lineage": {
+    "event_id": "d32dc292-44ca-40a5-8af4-78a4e346a10c"
+  },
+  "export": {
+    "artifact_path": null
+  }
+}

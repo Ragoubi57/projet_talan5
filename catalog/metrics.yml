@@ -1,0 +1,169 @@
+metrics:
+  - metric_id: complaint_count
+    name: "Total Complaint Count"
+    description: "Count of consumer complaints filed against financial institutions"
+    owner: "compliance_team"
+    version: "1.2.0"
+    effective_date: "2024-01-01"
+    grain: "monthly"
+    data_product: "dp_complaints"
+    allowed_dimensions: ["product", "company", "state", "region", "date_month", "complaint_quarter", "channel", "issue", "timely_response", "consumer_disputed"]
+    allowed_filters: ["date_received", "product", "company", "state", "region", "channel"]
+    sensitivity: "LOW"
+    sql_template: "SELECT {dimensions}, COUNT(*) as complaint_count FROM dp_complaints WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: timely_response_rate
+    name: "Timely Response Rate"
+    description: "Share of complaints with timely response"
+    owner: "compliance_team"
+    version: "1.0.0"
+    effective_date: "2024-01-01"
+    grain: "monthly"
+    data_product: "dp_complaints"
+    allowed_dimensions: ["product", "company", "state", "region", "date_month", "complaint_quarter", "channel", "issue"]
+    allowed_filters: ["date_received", "product", "company", "state", "region", "channel"]
+    sensitivity: "LOW"
+    sql_template: "SELECT {dimensions}, AVG(CASE WHEN timely_response='Yes' THEN 1 ELSE 0 END) as timely_response_rate FROM dp_complaints WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: dispute_rate
+    name: "Dispute Rate"
+    description: "Share of complaints disputed by consumers"
+    owner: "compliance_team"
+    version: "1.0.0"
+    effective_date: "2024-01-01"
+    grain: "monthly"
+    data_product: "dp_complaints"
+    allowed_dimensions: ["product", "company", "state", "region", "date_month", "complaint_quarter", "channel", "issue"]
+    allowed_filters: ["date_received", "product", "company", "state", "region", "channel"]
+    sensitivity: "LOW"
+    sql_template: "SELECT {dimensions}, AVG(CASE WHEN consumer_disputed='Yes' THEN 1 ELSE 0 END) as dispute_rate FROM dp_complaints WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: narrative_request_count
+    name: "Narrative Request Count"
+    description: "Count of complaints with narratives (HIGH sensitivity)"
+    owner: "compliance_team"
+    version: "1.0.0"
+    effective_date: "2024-01-01"
+    grain: "monthly"
+    data_product: "dp_complaints"
+    allowed_dimensions: ["product", "company", "state", "region", "date_month", "complaint_quarter", "channel", "issue"]
+    allowed_filters: ["date_received", "product", "company", "state", "region", "channel"]
+    sensitivity: "HIGH"
+    sql_template: "SELECT {dimensions}, COUNT(consumer_narrative) as narrative_request_count FROM dp_complaints WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: net_income_sum
+    name: "Net Income (Sum)"
+    description: "Total net income across banks for a given period"
+    owner: "finance_team"
+    version: "1.1.0"
+    effective_date: "2024-01-01"
+    grain: "quarterly"
+    data_product: "dp_call_reports"
+    allowed_dimensions: ["quarter", "bank_name", "bank_region"]
+    allowed_filters: ["quarter", "bank_name", "bank_region"]
+    sensitivity: "MED"
+    sql_template: "SELECT {dimensions}, SUM(net_income) as net_income_sum FROM dp_call_reports WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: net_income_avg
+    name: "Net Income (Average)"
+    description: "Average net income per bank for a given period"
+    owner: "finance_team"
+    version: "1.0.0"
+    effective_date: "2024-01-01"
+    grain: "quarterly"
+    data_product: "dp_call_reports"
+    allowed_dimensions: ["quarter", "bank_name", "bank_region"]
+    allowed_filters: ["quarter", "bank_name", "bank_region"]
+    sensitivity: "MED"
+    sql_template: "SELECT {dimensions}, AVG(net_income) as net_income_avg FROM dp_call_reports WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: net_income_margin_avg
+    name: "Net Income Margin (Average)"
+    description: "Average net income as a share of assets"
+    owner: "finance_team"
+    version: "1.0.0"
+    effective_date: "2024-01-01"
+    grain: "quarterly"
+    data_product: "dp_call_reports"
+    allowed_dimensions: ["quarter", "bank_name", "bank_region"]
+    allowed_filters: ["quarter", "bank_name", "bank_region"]
+    sensitivity: "MED"
+    sql_template: "SELECT {dimensions}, AVG(CAST(net_income AS DOUBLE)/NULLIF(CAST(total_assets AS DOUBLE),0)) as net_income_margin_avg FROM dp_call_reports WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: deposits_sum
+    name: "Total Deposits"
+    description: "Sum of total deposits across banks"
+    owner: "finance_team"
+    version: "1.0.0"
+    effective_date: "2024-01-01"
+    grain: "quarterly"
+    data_product: "dp_call_reports"
+    allowed_dimensions: ["quarter", "bank_name", "bank_region"]
+    allowed_filters: ["quarter", "bank_name", "bank_region"]
+    sensitivity: "LOW"
+    sql_template: "SELECT {dimensions}, SUM(total_deposits) as deposits_sum FROM dp_call_reports WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: deposits_avg
+    name: "Average Deposits"
+    description: "Average total deposits across banks"
+    owner: "finance_team"
+    version: "1.0.0"
+    effective_date: "2024-01-01"
+    grain: "quarterly"
+    data_product: "dp_call_reports"
+    allowed_dimensions: ["quarter", "bank_name", "bank_region"]
+    allowed_filters: ["quarter", "bank_name", "bank_region"]
+    sensitivity: "LOW"
+    sql_template: "SELECT {dimensions}, AVG(total_deposits) as deposits_avg FROM dp_call_reports WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: assets_sum
+    name: "Total Assets (Sum)"
+    description: "Sum of total assets across banks"
+    owner: "finance_team"
+    version: "1.0.0"
+    effective_date: "2024-01-01"
+    grain: "quarterly"
+    data_product: "dp_call_reports"
+    allowed_dimensions: ["quarter", "bank_name", "bank_region"]
+    allowed_filters: ["quarter", "bank_name", "bank_region"]
+    sensitivity: "LOW"
+    sql_template: "SELECT {dimensions}, SUM(total_assets) as assets_sum FROM dp_call_reports WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: deposit_to_asset_ratio_avg
+    name: "Deposit to Asset Ratio (Average)"
+    description: "Average deposits as a share of assets"
+    owner: "risk_team"
+    version: "1.0.0"
+    effective_date: "2024-01-01"
+    grain: "quarterly"
+    data_product: "dp_call_reports"
+    allowed_dimensions: ["quarter", "bank_name", "bank_region"]
+    allowed_filters: ["quarter", "bank_name", "bank_region"]
+    sensitivity: "LOW"
+    sql_template: "SELECT {dimensions}, AVG(deposit_to_asset_ratio) as deposit_to_asset_ratio_avg FROM dp_call_reports WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: tier1_ratio_avg
+    name: "Average Tier 1 Capital Ratio"
+    description: "Average Tier 1 capital ratio across banks"
+    owner: "risk_team"
+    version: "1.0.0"
+    effective_date: "2024-01-01"
+    grain: "quarterly"
+    data_product: "dp_call_reports"
+    allowed_dimensions: ["quarter", "bank_name", "bank_region"]
+    allowed_filters: ["quarter", "bank_name", "bank_region"]
+    sensitivity: "LOW"
+    sql_template: "SELECT {dimensions}, AVG(tier1_capital_ratio) as tier1_ratio_avg FROM dp_call_reports WHERE {filters} GROUP BY {dimensions}"
+
+  - metric_id: npa_ratio
+    name: "Non-Performing Assets Ratio"
+    description: "Ratio of non-performing assets to total assets"
+    owner: "risk_team"
+    version: "1.0.0"
+    effective_date: "2024-01-01"
+    grain: "quarterly"
+    data_product: "dp_call_reports"
+    allowed_dimensions: ["quarter", "bank_name", "bank_region"]
+    allowed_filters: ["quarter", "bank_name", "bank_region"]
+    sensitivity: "MED"
+    sql_template: "SELECT {dimensions}, AVG(CAST(non_performing_assets AS DOUBLE)/NULLIF(CAST(total_assets AS DOUBLE),0)) as npa_ratio FROM dp_call_reports WHERE {filters} GROUP BY {dimensions}"

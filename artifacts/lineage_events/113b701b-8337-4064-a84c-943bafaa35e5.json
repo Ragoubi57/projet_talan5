@@ -1,0 +1,29 @@
+{
+  "eventType": "COMPLETE",
+  "eventTime": "2026-02-18T09:09:56.143836+00:00",
+  "run": {
+    "runId": "113b701b-8337-4064-a84c-943bafaa35e5"
+  },
+  "job": {
+    "namespace": "banking_analytics",
+    "name": "analytics_query_deposits_sum"
+  },
+  "inputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "dp_call_reports"
+    }
+  ],
+  "outputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "query_results"
+    }
+  ],
+  "producer": "banking-analytics-agent",
+  "metadata": {
+    "sql": "SELECT quarter, SUM(total_deposits) AS deposits_sum FROM dp_call_reports WHERE 1=1 GROUP BY quarter HAVING COUNT(*) >= 10 ORDER BY quarter",
+    "user": "risk_officer",
+    "request_id": "pending"
+  }
+}

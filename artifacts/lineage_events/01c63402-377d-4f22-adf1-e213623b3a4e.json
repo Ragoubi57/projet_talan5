@@ -1,0 +1,29 @@
+{
+  "eventType": "COMPLETE",
+  "eventTime": "2026-02-18T09:15:19.521418+00:00",
+  "run": {
+    "runId": "01c63402-377d-4f22-adf1-e213623b3a4e"
+  },
+  "job": {
+    "namespace": "banking_analytics",
+    "name": "analytics_query_complaint_count"
+  },
+  "inputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "dp_complaints"
+    }
+  ],
+  "outputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "query_results"
+    }
+  ],
+  "producer": "banking-analytics-agent",
+  "metadata": {
+    "sql": "SELECT product, state, date_month, COUNT(*) AS complaint_count FROM dp_complaints WHERE 1=1 AND date_received >= CURRENT_DATE - INTERVAL '12 months' GROUP BY product, state, date_month HAVING COUNT(*) >= 10 ORDER BY product",
+    "user": "compliance_officer",
+    "request_id": "pending"
+  }
+}

@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: dp_complaints
+    description: "Gold-layer consumer complaints data product"
+    columns:
+      - name: complaint_id
+        tests:
+          - not_null
+          - unique
+      - name: date_received
+        tests:
+          - not_null
+      - name: product
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Credit card', 'Mortgage', 'Student loan', 'Vehicle loan',
+                       'Checking or savings', 'Debt collection', 'Credit reporting',
+                       'Money transfer', 'Personal loan', 'Payday loan']
+      - name: company
+        tests:
+          - not_null
+      - name: timely_response
+        tests:
+          - accepted_values:
+              values: ['Yes', 'No']
+
+  - name: dp_call_reports
+    description: "Gold-layer quarterly bank financial data product"
+    columns:
+      - name: quarter
+        tests:
+          - not_null
+      - name: bank_name
+        tests:
+          - not_null
+      - name: bank_id
+        tests:
+          - not_null
+      - name: total_assets
+        tests:
+          - not_null
+      - name: tier1_capital_ratio
+        tests:
+          - not_null

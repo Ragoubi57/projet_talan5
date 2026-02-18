@@ -1,0 +1,71 @@
+Verifiable Banking Analytics - Plain English Guide
+
+What this project is
+This is a demo analytics system for banks. People can ask questions in normal language and get charts and answers. Every answer also produces an evidence pack that shows how the answer was made. This makes the results auditable for compliance and regulators.
+
+What it does end to end
+1. Takes a natural language question.
+2. Finds the relevant metric and data product.
+3. Builds a simple analytics plan (dimensions, filters, aggregation).
+4. Checks policy rules (role, region, purpose, sensitivity).
+5. Applies constraints like minimum group size, redaction, or row limits.
+6. Compiles safe SQL and validates it.
+7. Checks data quality gates.
+8. Runs the query in DuckDB.
+9. Records lineage and builds an evidence pack.
+10. Returns results, charts, and the evidence pack.
+
+Why region and purpose matter
+- Region is enforced as a data filter. Complaints have a derived region and call reports have a bank_region.
+- Branch managers must select a specific region (cannot use all).
+- Purpose changes policy constraints:
+  - reporting enforces month-level aggregation
+  - regulatory enforces quarter-level aggregation
+  - investigation enforces access logging, caps rows, and forbids export
+
+Key technologies used
+- Streamlit: web UI
+- DuckDB: analytics engine
+- OPA (Rego): policy engine
+- Great Expectations style checks: data quality gates
+- dbt: data modeling (staging and gold)
+- OpenLineage and Marquez: lineage tracking
+- Ollama: LLM explanations, with a mock fallback
+
+Project steps and where they live
+- Synthetic data generation: scripts/generate_synth_data.py
+- Schema validation: scripts/validate_schema.py
+- Seed DuckDB + create data products: scripts/seed_duckdb.py
+- Ingestion pipeline: scripts/ingest.py
+- Policy rules: policies/banking.rego
+- Metrics and data products: catalog/metrics.yml and catalog/data_products.yml
+- Main app: app/streamlit_app.py
+
+How to run it
+Option 1: Docker (recommended)
+- docker compose up --build
+- Open http://localhost:8501
+
+Option 2: Local dev
+- pip install -r requirements.txt
+- make demo
+
+What makes it unique
+- Evidence packs for every query, with hashes and lineage for auditability
+- Policy-first execution that blocks unsafe or non-compliant requests
+- Built-in quality gates and promotion checks
+- Clear role, region, and purpose controls that affect results
+- Reproducible synthetic data for demos and testing
+
+How to sell this product
+- Lead with compliance: show that every answer is auditable and policy-checked.
+- Show time savings: analysts get answers quickly without writing SQL.
+- Emphasize control: roles, regions, and purposes enforce the rules automatically.
+- Highlight transparency: evidence packs make reviews and audits faster.
+- De-risk adoption: it runs locally or in containers, uses standard tools, and supports mock LLMs.
+
+Added value for buyers
+- Faster analytics without sacrificing governance
+- Strong audit trail and policy enforcement by default
+- Reduced risk of sensitive data exposure
+- Easier collaboration between analytics and compliance teams

@@ -1,0 +1,29 @@
+{
+  "eventType": "COMPLETE",
+  "eventTime": "2026-02-18T00:06:19.945466+00:00",
+  "run": {
+    "runId": "0b970c46-0bc7-44ae-b8b9-0482d8d109bd"
+  },
+  "job": {
+    "namespace": "banking_analytics",
+    "name": "analytics_query_complaint_count"
+  },
+  "inputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "dp_complaints"
+    }
+  ],
+  "outputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "query_results"
+    }
+  ],
+  "producer": "banking-analytics-agent",
+  "metadata": {
+    "sql": "SELECT state, product, COUNT(*) AS complaint_count FROM dp_complaints WHERE 1=1 AND date_received >= CURRENT_DATE - INTERVAL '12 months' GROUP BY state, product HAVING COUNT(*) >= 10 ORDER BY state",
+    "user": "auditor",
+    "request_id": "pending"
+  }
+}

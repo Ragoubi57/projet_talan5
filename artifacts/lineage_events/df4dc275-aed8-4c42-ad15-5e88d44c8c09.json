@@ -1,0 +1,29 @@
+{
+  "eventType": "COMPLETE",
+  "eventTime": "2026-02-18T01:23:31.150333+00:00",
+  "run": {
+    "runId": "df4dc275-aed8-4c42-ad15-5e88d44c8c09"
+  },
+  "job": {
+    "namespace": "banking_analytics",
+    "name": "analytics_query_deposit_to_asset_ratio_avg"
+  },
+  "inputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "dp_call_reports"
+    }
+  ],
+  "outputs": [
+    {
+      "namespace": "banking_analytics",
+      "name": "query_results"
+    }
+  ],
+  "producer": "banking-analytics-agent",
+  "metadata": {
+    "sql": "SELECT bank_region, AVG(deposit_to_asset_ratio) AS deposit_to_asset_ratio_avg FROM dp_call_reports WHERE 1=1 GROUP BY bank_region HAVING COUNT(*) >= 10 ORDER BY bank_region",
+    "user": "compliance_officer",
+    "request_id": "pending"
+  }
+}

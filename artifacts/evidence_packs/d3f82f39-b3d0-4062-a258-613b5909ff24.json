@@ -1,0 +1,56 @@
+{
+  "request_id": "d3f82f39-b3d0-4062-a258-613b5909ff24",
+  "timestamp": "2026-02-18T00:08:42.817317+00:00",
+  "request_text": "show total deposit by quarter",
+  "user_attributes": {
+    "role": "auditor",
+    "region": "northeast",
+    "purpose": "reporting"
+  },
+  "policy_decision": {
+    "result": "ALLOW",
+    "reason": "Low sensitivity data allowed for all authenticated roles",
+    "constraints_applied": {
+      "min_group_size": 10
+    }
+  },
+  "metrics": {
+    "metric_ids": [
+      "deposits_sum"
+    ],
+    "metric_versions": {
+      "deposits_sum": "1.0.0"
+    }
+  },
+  "data_products": {
+    "products_used": [
+      "dp_call_reports"
+    ],
+    "product_versions": {
+      "dp_call_reports": "1.5.0"
+    }
+  },
+  "data_quality": {
+    "freshness": {
+      "dp_call_reports": null
+    },
+    "quality_checks": {
+      "dp_call_reports": true
+    }
+  },
+  "sql": {
+    "final_sql": "SELECT quarter, SUM(total_deposits) AS deposits_sum FROM dp_call_reports WHERE 1=1 GROUP BY quarter HAVING COUNT(*) >= 10 ORDER BY quarter",
+    "canonical_sql": "SELECT QUARTER, SUM(TOTAL_DEPOSITS) AS DEPOSITS_SUM FROM DP_CALL_REPORTS WHERE 1=1 GROUP BY QUARTER HAVING COUNT(*) >= 10 ORDER BY QUARTER",
+    "sql_hash": "208ff81315e995a1cabcf4966cf486576dcb76338901cd4d2aaf4e7b8126404d"
+  },
+  "results": {
+    "row_count": 24,
+    "suppression_count": 0
+  },
+  "lineage": {
+    "event_id": "20aa8fe9-56b4-4a0a-b5dd-9d2dda973560"
+  },
+  "export": {
+    "artifact_path": null
+  }
+}

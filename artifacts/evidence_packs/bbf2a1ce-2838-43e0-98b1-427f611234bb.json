@@ -1,0 +1,56 @@
+{
+  "request_id": "bbf2a1ce-2838-43e0-98b1-427f611234bb",
+  "timestamp": "2026-02-18T01:23:35.181776+00:00",
+  "request_text": "Deposit to asset ratio by bank region",
+  "user_attributes": {
+    "role": "compliance_officer",
+    "region": "southeast",
+    "purpose": "investigation"
+  },
+  "policy_decision": {
+    "result": "ALLOW",
+    "reason": "Low sensitivity data allowed for all authenticated roles",
+    "constraints_applied": {
+      "min_group_size": 10
+    }
+  },
+  "metrics": {
+    "metric_ids": [
+      "deposit_to_asset_ratio_avg"
+    ],
+    "metric_versions": {
+      "deposit_to_asset_ratio_avg": "1.0.0"
+    }
+  },
+  "data_products": {
+    "products_used": [
+      "dp_call_reports"
+    ],
+    "product_versions": {
+      "dp_call_reports": "1.5.0"
+    }
+  },
+  "data_quality": {
+    "freshness": {
+      "dp_call_reports": null
+    },
+    "quality_checks": {
+      "dp_call_reports": true
+    }
+  },
+  "sql": {
+    "final_sql": "SELECT bank_region, AVG(deposit_to_asset_ratio) AS deposit_to_asset_ratio_avg FROM dp_call_reports WHERE 1=1 GROUP BY bank_region HAVING COUNT(*) >= 10 ORDER BY bank_region",
+    "canonical_sql": "SELECT BANK_REGION, AVG(DEPOSIT_TO_ASSET_RATIO) AS DEPOSIT_TO_ASSET_RATIO_AVG FROM DP_CALL_REPORTS WHERE 1=1 GROUP BY BANK_REGION HAVING COUNT(*) >= 10 ORDER BY BANK_REGION",
+    "sql_hash": "e4bf490848223b74fefd9b959a4c299bcbf04adcdbd18fa6ba74c8372a9b98a6"
+  },
+  "results": {
+    "row_count": 4,
+    "suppression_count": 0
+  },
+  "lineage": {
+    "event_id": "df4dc275-aed8-4c42-ad15-5e88d44c8c09"
+  },
+  "export": {
+    "artifact_path": null
+  }
+}

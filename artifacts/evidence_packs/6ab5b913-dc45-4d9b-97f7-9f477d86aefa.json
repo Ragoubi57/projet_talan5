@@ -1,0 +1,56 @@
+{
+  "request_id": "6ab5b913-dc45-4d9b-97f7-9f477d86aefa",
+  "timestamp": "2026-02-18T01:22:14.921726+00:00",
+  "request_text": "Show net income trend with outlier detection",
+  "user_attributes": {
+    "role": "branch_manager",
+    "region": "all",
+    "purpose": "reporting"
+  },
+  "policy_decision": {
+    "result": "ALLOW",
+    "reason": "Low sensitivity data allowed for all authenticated roles",
+    "constraints_applied": {
+      "min_group_size": 10
+    }
+  },
+  "metrics": {
+    "metric_ids": [
+      "net_income_sum"
+    ],
+    "metric_versions": {
+      "net_income_sum": "1.1.0"
+    }
+  },
+  "data_products": {
+    "products_used": [
+      "dp_call_reports"
+    ],
+    "product_versions": {
+      "dp_call_reports": "1.5.0"
+    }
+  },
+  "data_quality": {
+    "freshness": {
+      "dp_call_reports": null
+    },
+    "quality_checks": {
+      "dp_call_reports": true
+    }
+  },
+  "sql": {
+    "final_sql": "SELECT quarter, SUM(net_income) AS net_income_sum FROM dp_call_reports WHERE 1=1 GROUP BY quarter HAVING COUNT(*) >= 10 ORDER BY quarter",
+    "canonical_sql": "SELECT QUARTER, SUM(NET_INCOME) AS NET_INCOME_SUM FROM DP_CALL_REPORTS WHERE 1=1 GROUP BY QUARTER HAVING COUNT(*) >= 10 ORDER BY QUARTER",
+    "sql_hash": "a65267c91911de62f9f20a425feb264a63ffe6dc884ae9c2bd862065e98e3d41"
+  },
+  "results": {
+    "row_count": 24,
+    "suppression_count": 0
+  },
+  "lineage": {
+    "event_id": "190c6f72-761c-4051-b684-20c98c49669f"
+  },
+  "export": {
+    "artifact_path": null
+  }
+}
